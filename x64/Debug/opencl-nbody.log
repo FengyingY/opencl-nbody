@@ -1,3 +1,0 @@
-﻿  Opencl.cpp
-D:\opencl_gpu\opencl-nbody\opencl-nbody\Opencl.cpp(41,12): warning C4477: 'printf' : format string '%s' requires an argument of type 'char *', but variadic argument 1 has type 'char **'
-  opencl-nbody.vcxproj -> D:\opencl_gpu\opencl-nbody\x64\Debug\opencl-nbody.exe

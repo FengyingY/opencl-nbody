@@ -30,3 +30,12 @@
 *.exe
 *.out
 *.app
+
+# Debug
+/Debug
+/x64
+/opencl-nbody/Debug
+/opencl-nbody/x64
+
+# Visual Studio
+/.vs
