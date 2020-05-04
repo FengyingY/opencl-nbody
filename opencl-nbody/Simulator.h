@@ -45,6 +45,7 @@ private:
 
 	// helper arrays
 	std::vector<std::vector<int> > nodes_at_level;
+	int** nodes_at_level_arr;
 	int offset_at_level[MAXLEVEL + 1];
 	
 	void init_quads_dfs(Quad quad, int index, int offset, int level);
@@ -55,4 +56,5 @@ private:
 	void update_position();
 	int get_quad_index(Quad quad, Position pos);
 	void add_body(Node* node, Body* new_body);
+	void setupChildren(int index, int level);
 };

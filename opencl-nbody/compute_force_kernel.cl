@@ -44,4 +44,11 @@ __kernel void compute_force_kernel(__global Body* bodies, __global Node* nodes) 
 			i++;
 		}
 	}
+	/*
+	if (index == 0)
+		printf("%.4f %.4f\n", b->force.x, b->force.y);
+	*/
+	
+	
+	
 }

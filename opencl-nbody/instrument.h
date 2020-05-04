@@ -21,7 +21,9 @@
 
 /* Categories of activities */
 typedef enum { ACTIVITY_OVERHEAD, ACTIVITY_STARTUP, ACTIVITY_CONSTRUCT_TREE, ACTIVITY_FORCE, ACTIVITY_POSITION, ACTIVITY_HOST_TO_DEVICE, 
-               ACTIVITY_DEVICE_TO_HOST, ACTIVITY_RENDER ,ACTIVITY_COUNT } activity_t;
+               ACTIVITY_DEVICE_TO_HOST, ACTIVITY_RENDER, 
+                ACTIVITY_RESET_CHILD, ACTIVITY_SPLIT_NODE, ACTIVITY_SETUP_CHILD,
+                ACTIVITY_COUNT } activity_t;
 
 void track_activity(bool enable);
 void start_activity(activity_t a);

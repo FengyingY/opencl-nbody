@@ -9,6 +9,10 @@
 BHParallel::BHParallel(Body* init_bodies) {
 	bodies = init_bodies;
 	nodes = (Node*) calloc(MAXNODE, sizeof(Node));
+
+	printf("Bodies size: %d\n", sizeof(Body) * N);
+	printf("Nodes size: %d\n", sizeof(Node) * MAXNODE);
+
 	// initialize the root node
 	for (int i = 0; i < N; i++) {
 		add_body(&nodes[0], &bodies[i]);
@@ -16,7 +20,7 @@ BHParallel::BHParallel(Body* init_bodies) {
 
 	// initialize the helper arrays
 	int offset = MAXNODE;
-	for (int i = 0; i <= MAXLEVEL; i++) {
+	for (int i = 0; i < MAXLEVEL; i++) {
 		nodes_at_level.push_back(std::vector<int>());
 		offset_at_level[i] = offset;
 		offset = (offset - 1) / 4;
@@ -28,6 +32,16 @@ BHParallel::BHParallel(Body* init_bodies) {
 	quad.y = 0;
 	quad.width = WIDTH;
 	init_quads_dfs(quad, 0, MAXNODE, 0);
+
+	// initialize the array
+	nodes_at_level_arr = (int**)malloc(sizeof(int*) * (MAXLEVEL));
+	for (int i = 0; i < MAXLEVEL; i++) {
+		int size = nodes_at_level[i].size();
+		nodes_at_level_arr[i] = (int*)malloc(sizeof(int) * size);
+		for (int ii = 0; ii < size; ii++) {
+			nodes_at_level_arr[i][ii] = nodes_at_level[i][ii];
+		}
+	}
 
 	cl = initialize_opencl();
 	if (cl == NULL) {
@@ -81,59 +95,74 @@ void BHParallel::reset_node(int node_index) {
 	n->bodies_count = 0;
 }
 
+void BHParallel::setupChildren(int index, int level) {
+	//START_ACTIVITY(ACTIVITY_RESET_CHILD);
+	Node* parent_node = &nodes[index];
+	// reset children info
+	int child_index = index + 1;
+	for (int ii = 0; ii < 4; ii++) {
+		reset_node(child_index);
+		child_index += offset_at_level[level + 1];
+	}
+	//FINISH_ACTIVITY(ACTIVITY_RESET_CHILD);
+
+	if (parent_node->bodies_count > 1) {
+
+		//START_ACTIVITY(ACTIVITY_SPLIT_NODE);
+		// loop over all the bodies at this node
+		int start_index = parent_node->body_start_idx;
+		int end_index = start_index + parent_node->bodies_count;
+		for (int j = start_index; j < end_index; j++) {
+			Body* b = &bodies[j];
+			// the body is still in the zone
+			if (is_in_bound(*b)) {
+				// get quad index and then map to the child
+				int quad_index = get_quad_index(parent_node->quad, b->pos);
+				int node_index = index + 1 + quad_index * offset_at_level[level + 1];		// child level
+				// update the body's node_index
+				b->node_idx = node_index;
+				// add the body to the child's node
+				add_body(&nodes[node_index], b);
+			}
+			else {
+				b->node_idx = MAXNODE;
+			}
+		}
+		//FINISH_ACTIVITY(ACTIVITY_SPLIT_NODE);
+
+		//START_ACTIVITY(ACTIVITY_SETUP_CHILD);
+		// sort the nodes by its node index
+		Body* start = bodies + parent_node->body_start_idx;
+		qsort(start, parent_node->bodies_count, sizeof(Body), compareBody);
+
+		// set the body start index for the children
+		nodes[index + 1].body_start_idx = parent_node->body_start_idx;
+		Node* prev_node = &nodes[index + 1];
+		child_index = index + 1 + offset_at_level[level + 1];
+		for (int ii = 1; ii < 4; ii++) {
+			nodes[child_index].body_start_idx = prev_node->body_start_idx + prev_node->bodies_count;
+			// go to the next child
+			prev_node = &nodes[child_index];
+			child_index += offset_at_level[level + 1];
+		}
+		//FINISH_ACTIVITY(ACTIVITY_SETUP_CHILD);
+	}
+}
+
 void BHParallel::construct_tree() {
+#if DEBUG
+	printf("constructing tree\n");
+#endif
 	int node_count = 1;
 	for (int level = 0; level < MAXLEVEL; level++) {					// parent level
 		// loop over all nodes at this level
 		//for (std::vector<int>::iterator it = nodes_at_level[level].begin(); it != nodes_at_level[level].end(); it++) {		// this 
-		// #pragma omp parallel for schedule(static)
+
+//#pragma omp parallel for num_threads(4) schedule(static) 
 		for (int i = 0; i < node_count; i++) {
 			// int index = *it; 
-			int index = nodes_at_level[level][i];
-			Node* parent_node = &nodes[index];
-			// reset children info
-			int child_index = index + 1;
-			for (int ii = 0; ii < 4; ii++) {
-				reset_node(child_index);
-				child_index += offset_at_level[level + 1];
-			}
-
-			if (parent_node->bodies_count > 1) {
-				// loop over all the bodies at this node
-				int start_index = parent_node->body_start_idx;
-				int end_index = start_index + parent_node->bodies_count;
-				for (int j = start_index; j < end_index; j++) {
-					Body* b = &bodies[j];
-					// the body is still in the zone
-					if (is_in_bound(*b)) {
-						// get quad index and then map to the child
-						int quad_index = get_quad_index(parent_node->quad, b->pos);
-						int node_index = index + 1 + quad_index * offset_at_level[level+1];		// child level
-						// update the body's node_index
-						b->node_idx = node_index;
-						// add the body to the child's node
-						add_body(&nodes[node_index], b);
-					}
-					else {
-						b->node_idx = MAXNODE;
-					}
-				}
-
-				// sort the nodes by its node index
-				Body* start = bodies + parent_node->body_start_idx;
-				qsort(start, parent_node->bodies_count, sizeof(Body), compareBody);
-
-				// set the body start index for the children
-				nodes[index+1].body_start_idx = parent_node->body_start_idx;
-				Node* prev_node = &nodes[index + 1];
-				child_index = index + 1 + offset_at_level[level+1];
-				for (int ii = 1; ii < 4; ii++) {
-					nodes[child_index].body_start_idx = prev_node->body_start_idx + prev_node->bodies_count;
-					// go to the next child
-					prev_node = &nodes[child_index];
-					child_index += offset_at_level[level+1];
-				}
-			}
+			int index = nodes_at_level_arr[level][i];
+			setupChildren(index, level);
 		}
 		node_count *= 4;
 	}
@@ -142,6 +171,9 @@ void BHParallel::construct_tree() {
 void BHParallel::compute_force() {
 #if (GPU)
 	START_ACTIVITY(ACTIVITY_HOST_TO_DEVICE);
+#if DEBUG
+	printf("Compute force: copying bodies to kernel\n");
+#endif
 	// copy the bodies and nodes array to the device
 	cl->err = clEnqueueWriteBuffer(cl->queue, bodies_obj, CL_TRUE, 0, sizeof(Body) * N, bodies, 0, NULL, NULL);
 	if (cl->err) {
@@ -149,6 +181,9 @@ void BHParallel::compute_force() {
 		exit(cl->err);
 	}
 
+#if DEBUG
+	printf("Compute force: copying nodes to kernel\n");
+#endif
 	cl->err = clEnqueueWriteBuffer(cl->queue, nodes_obj, CL_TRUE, 0, sizeof(Node) * MAXNODE, nodes, 0, NULL, NULL);
 	if (cl->err) {
 		fprintf(stderr, "BHParallel::compute_force clEnqueueWriteBuffer for nodes error\n");
@@ -158,6 +193,9 @@ void BHParallel::compute_force() {
 	
 	// launch the kernel 
 	START_ACTIVITY(ACTIVITY_FORCE);
+#if DEBUG
+	printf("Compute force: executed kernel\n");
+#endif
 	opencl_compute_force(&bodies_obj, &nodes_obj, cl);
 	FINISH_ACTIVITY(ACTIVITY_FORCE);
 
@@ -202,11 +240,18 @@ void BHParallel::update_position() {
 #if (GPU)
 	// launch the kernel
 	START_ACTIVITY(ACTIVITY_POSITION);
+#if DEBUG
+	printf("Update position: executed kernel\n");
+#endif // DEBUG
+
 	opencl_update_position(&bodies_obj, cl);
 	FINISH_ACTIVITY(ACTIVITY_POSITION);
 	// write the bodies back to the host
 
 	START_ACTIVITY(ACTIVITY_DEVICE_TO_HOST);
+#if DEBUG
+	printf("Update position: copyinboides back \n");
+#endif
 	cl->err = clEnqueueReadBuffer(cl->queue, bodies_obj, CL_TRUE, 0, sizeof(Body) * N, bodies, 0, NULL, NULL);
 	if (cl->err) {
 		fprintf(stderr, "NaiveCL::next_move clEnqueueReadBuffer error\n");
@@ -240,7 +285,8 @@ void BHParallel::init_quads_dfs(Quad quad, int index, int offset, int level) {
 	// set the quad and level
 	nodes[index].quad = quad;
 	nodes[index].level = level;
-	nodes_at_level[level].push_back(index);
+	if (level < MAXLEVEL)
+		nodes_at_level[level].push_back(index);
 	
 	// printf("n[%d]\tx=%.4f\ty=%.4f\tw=%.4f\tlevel=%d\toffset=%d\n", index, quad.x, quad.y, quad.width, level, offset);
 	

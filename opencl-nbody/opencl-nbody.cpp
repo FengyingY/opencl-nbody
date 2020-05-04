@@ -18,7 +18,9 @@
 
 int main(int argc, char *argv[]) {
     track_activity(true);
-    omp_set_num_threads(12);
+
+    omp_set_dynamic(0);
+    printf("OPM default thread num: %d\n", omp_get_num_threads());
     
     START_ACTIVITY(ACTIVITY_STARTUP);
     // Alloacte memory for bodies
@@ -36,8 +38,8 @@ int main(int argc, char *argv[]) {
 
     int count = 0;
 
-    while(count < 1000) {
-        /*
+    while(count < 100 && !quit) {
+        
         START_ACTIVITY(ACTIVITY_RENDER);
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_QUIT) {
@@ -45,7 +47,7 @@ int main(int argc, char *argv[]) {
             }
         }
         FINISH_ACTIVITY(ACTIVITY_RENDER);
-        */
+        
         
         
         // execute kernels

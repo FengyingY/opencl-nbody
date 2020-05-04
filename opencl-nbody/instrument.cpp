@@ -11,7 +11,8 @@
 #define MAX_THREAD 64
 
 /* Instrument different sections of program */
-static const char* activity_name[ACTIVITY_COUNT] = {"overhead", "startup", "construct_tree", "compute_force", "update_position", "host_to_device", "device_to_host", "render" };
+static const char* activity_name[ACTIVITY_COUNT] = {"overhead", "startup", "construct_tree", "compute_force", "update_position", "host_to_device", "device_to_host", "render", 
+"reset_child", "split_node", "setup_child"};
 
 static bool tracking = false;   
 static double global_start_time = 0.0;

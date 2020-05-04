@@ -187,9 +187,9 @@ void compute_force(NodeSeq* root, Body *b) {
 	}
 	
 }
-
+ 
 void update_position(Body* bodies) {
-	#pragma omp parallel for schedule(static)
+	//#pragma omp parallel for schedule(static)
 	for (int i = 0; i < N; i++) {
 		Body* bp = &bodies[i];
 		/*

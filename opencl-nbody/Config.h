@@ -1,4 +1,4 @@
-#define N (10000)
+#define N (10001)
 #define G (0.00006674)
 #define WIDTH (1000)
 #define HEIGTH (1000)
