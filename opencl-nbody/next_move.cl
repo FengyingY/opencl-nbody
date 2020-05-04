@@ -2,9 +2,9 @@
 #include "Body.h"
 #include "position.h"
 
-__kernel void next_move(__global body *bodies) {
+__kernel void next_move(__global Body *bodies) {
     unsigned int index = get_global_id(0);
-    __global body* target = &bodies[index];
+    __global Body* target = &bodies[index];
 
 
     /*

@@ -1,5 +1,5 @@
 #pragma once
-typedef struct position {
+typedef struct Position {
 	float x;
 	float y;
-} position;
+} Position;

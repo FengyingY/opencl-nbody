@@ -108,6 +108,7 @@
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>C:\Program Files\SDL2-2.0.12\include;$(OPENCL_NVIDIA_DIR);$(OPENCL_DIR);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OpenMPSupport>true</OpenMPSupport>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -148,6 +149,7 @@
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>C:\Program Files\SDL2-2.0.12\include;$(OPENCL_NVIDIA_DIR);$(OPENCL_DIR);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OpenMPSupport>true</OpenMPSupport>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -159,22 +161,34 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="BH-seq.cpp" />
+    <ClCompile Include="BHParallel.cpp" />
+    <ClCompile Include="BHSequential.cpp" />
+    <ClCompile Include="cycletimer.cpp" />
+    <ClCompile Include="instrument.cpp" />
     <ClCompile Include="opencl-nbody.cpp" />
     <ClCompile Include="Opencl.cpp" />
+    <ClCompile Include="SDLDraw.cpp" />
+    <ClCompile Include="NaiveCL.cpp" />
+    <ClCompile Include="Simulator.cpp" />
     <ClCompile Include="Utility.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="C:\Program Files\SDL2-2.0.12\lib\x64\SDL2.dll" />
+    <None Include="compute_force_kernel.cl" />
     <None Include="next_move.cl" />
     <None Include="update_position.cl" />
     <None Include="vector_add_kernel.cl" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BH.h" />
     <ClInclude Include="Body.h" />
     <ClInclude Include="Config.h" />
+    <ClInclude Include="cycletimer.h" />
+    <ClInclude Include="instrument.h" />
     <ClInclude Include="Opencl.h" />
     <ClInclude Include="position.h" />
+    <ClInclude Include="SDLDraw.h" />
+    <ClInclude Include="Simulator.h" />
     <ClInclude Include="Utility.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

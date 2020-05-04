@@ -5,17 +5,19 @@
 
 const char* kernel_file_names[] = {
     "next_move.cl",
-    "update_position.cl"
+    "update_position.cl",
+    "compute_force_kernel.cl"
 };
 
 const char* kernel_names[] = {
     "next_move",
-    "update_position"
+    "update_position",
+    "compute_force_kernel"
 };
 
 // Execute the OpenCL kernel on the list
 size_t global_item_size = N; // Process the entire lists
-size_t local_item_size = N; // Divide work items into groups of 64
+size_t local_item_size = 64; // Divide work items into groups of 64
 
 
 opencl* initialize_opencl() {
@@ -96,47 +98,79 @@ opencl* initialize_opencl() {
 }
 
 void opencl_next_move(cl_mem* bodies, opencl* cl) {
+    int idx = 0;
     // set argument for the kernel
-    cl->err = clSetKernelArg(cl->kernels[0], 0, sizeof(cl_mem), bodies);
+    cl->err = clSetKernelArg(cl->kernels[idx], 0, sizeof(cl_mem), bodies);
     if (cl->err) {
-        fprintf(stderr, "clSetKernelArg [%s] error\n", kernel_file_names[0]);
+        fprintf(stderr, "clSetKernelArg [%s] error\n", kernel_file_names[idx]);
         exit(cl->err);
     }
 
-    // excute the kernel
-    cl->err = clEnqueueNDRangeKernel(cl->queue, cl->kernels[0], 1, NULL, &global_item_size, NULL, 0, NULL, NULL);
+    // execute the kernel
+    cl->err = clEnqueueNDRangeKernel(cl->queue, cl->kernels[idx], 1, NULL, &global_item_size, NULL, 0, NULL, NULL);
     if (cl->err) {
-        fprintf(stderr, "clEnqueueNDRangeKernel [%s] error\n", kernel_file_names[0]);
+        fprintf(stderr, "clEnqueueNDRangeKernel [%s] error\n", kernel_file_names[idx]);
         exit(cl->err);
     }
 
     cl->err = clFinish(cl->queue);
     if (cl->err) {
-        fprintf(stderr, "clFinish [%s] error\n", kernel_file_names[0]);
+        fprintf(stderr, "clFinish [%s] error\n", kernel_file_names[idx]);
         exit(cl->err);
     }
 }
 
 void opencl_update_position(cl_mem* bodies, opencl* cl) {
+    int idx = 1;
     // set argument for the kernel
-    cl->err = clSetKernelArg(cl->kernels[1], 0, sizeof(cl_mem), bodies);
+    cl->err = clSetKernelArg(cl->kernels[idx], 0, sizeof(cl_mem), bodies);
     if (cl->err) {
-        fprintf(stderr, "clSetKernelArg [%s] error\n", kernel_file_names[1]);
+        fprintf(stderr, "clSetKernelArg [%s] error\n", kernel_file_names[idx]);
         exit(cl->err);
     }
 
-    // excute the kernel
-    cl->err = clEnqueueNDRangeKernel(cl->queue, cl->kernels[1], 1, NULL, &global_item_size, NULL, 0, NULL, NULL);
+    // execute the kernel
+    cl->err = clEnqueueNDRangeKernel(cl->queue, cl->kernels[idx], 1, NULL, &global_item_size, NULL, 0, NULL, NULL);
     if (cl->err) {
-        fprintf(stderr, "clEnqueueNDRangeKernel [%s] error\n", kernel_file_names[1]);
+        fprintf(stderr, "clEnqueueNDRangeKernel [%s] error\n", kernel_file_names[idx]);
         exit(cl->err);
     }
 
     cl->err = clFinish(cl->queue);
     if (cl->err) {
-        fprintf(stderr, "clFinish [%s] error\n", kernel_file_names[1]);
+        fprintf(stderr, "clFinish [%s] error\n", kernel_file_names[idx]);
         exit(cl->err);
     }
+}
+
+void opencl_compute_force(cl_mem* bodies, cl_mem* nodes, opencl* cl) {
+    int idx = 2;
+    // set arguments for the kernel
+    cl->err = clSetKernelArg(cl->kernels[idx], 0, sizeof(cl_mem), bodies);
+    if (cl->err) {
+        fprintf(stderr, "clSetKernelArg for bodies [%s] error\n", kernel_file_names[idx]);
+        exit(cl->err);
+    }
+
+    cl->err = clSetKernelArg(cl->kernels[idx], 1, sizeof(cl_mem), nodes);
+    if (cl->err) {
+        fprintf(stderr, "clSetKernelArg [%s] for nodes error\n", kernel_file_names[idx]);
+        exit(cl->err);
+    }
+
+    // execute the kernel
+    cl->err = clEnqueueNDRangeKernel(cl->queue, cl->kernels[idx], 1, NULL, &global_item_size, NULL, 0, NULL, NULL);
+    if (cl->err) {
+        fprintf(stderr, "clEnqueueNDRangeKernel [%s] error\n", kernel_file_names[idx]);
+        exit(cl->err);
+    }
+
+    cl->err = clFinish(cl->queue);
+    if (cl->err) {
+        fprintf(stderr, "clFinish [%s] error\n", kernel_file_names[idx]);
+        exit(cl->err);
+    }
+
 }
 
 void opencl_cleanup(opencl* cl) {

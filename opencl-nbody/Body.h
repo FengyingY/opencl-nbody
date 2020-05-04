@@ -1,9 +1,12 @@
 #pragma once
 #include "position.h"
 
-typedef struct body {
-	position pos;
-	position speed;
-	position force;
+typedef struct Body {
+	Position pos;
+	Position speed;
+	Position force;
 	float mass;
-} body;
+	int node_idx;				// the index of the node
+} Body;
+
+int compareBody(const void* a, const void* b);

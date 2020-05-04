@@ -19,5 +19,6 @@ opencl* initialize_opencl();
 void opencl_next_move(cl_mem* bodies, opencl* cl);
 void opencl_update_position(cl_mem* bodies, opencl* cl);
 void opencl_cleanup(opencl* cl);
+void opencl_compute_force(cl_mem* bodies, cl_mem* nodes, opencl* cl);
 
 #endif

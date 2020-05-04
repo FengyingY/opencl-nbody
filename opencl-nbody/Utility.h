@@ -1,12 +1,11 @@
 #pragma once
-#include <stdlib.h>
-#include <math.h>
-
 #include "Body.h"
 #include "position.h"
 #include "Opencl.h"
 
-float distance(position a, position b);
-void initialize_bodies_two_galaxies(body* bodies);
-void initialize_bodies(body* bodies);
-void update_force(body *b1, body *b2, float d);
+float distance(Position a, Position b);
+void initialize_bodies_two_galaxies(Body* bodies);
+void initialize_bodies(Body* bodies);
+void update_force(float mass, Position pos, Body* target, float distance);
+int max_node(int level);
+bool is_in_bound(Body b);

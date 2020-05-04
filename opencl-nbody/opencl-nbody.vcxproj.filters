@@ -21,10 +21,28 @@
     <ClCompile Include="Utility.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="BH-seq.cpp">
+    <ClCompile Include="Opencl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Opencl.cpp">
+    <ClCompile Include="SDLDraw.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="NaiveCL.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BHSequential.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BHParallel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Simulator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="instrument.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="cycletimer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -39,6 +57,9 @@
       <Filter>Source Files</Filter>
     </None>
     <None Include="update_position.cl">
+      <Filter>Source Files</Filter>
+    </None>
+    <None Include="compute_force_kernel.cl">
       <Filter>Source Files</Filter>
     </None>
   </ItemGroup>
@@ -56,6 +77,21 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Config.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Simulator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SDLDraw.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BH.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="instrument.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cycletimer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
