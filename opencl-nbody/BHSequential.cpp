@@ -93,7 +93,6 @@ void insert_node(NodeSeq* root, Body to_insert) {
 			while (quad_index1 == quad_index2 && root->level < MAXLEVEL - 1) {
 				// create a new internal node
 				Quad internal_quad = get_sub_quad(root->quad, quad_index1);
-				// printf("New internal sub quad: x[%.1f] y[%.1f] w[%.1f]\n", internal_quad.x, internal_quad.y, internal_quad.width);
 				NodeSeq* node = new_node(cm, cp, internal_quad, false, root->level + 1);
 				root->children[quad_index1] = node;
 
@@ -105,8 +104,6 @@ void insert_node(NodeSeq* root, Body to_insert) {
 
 			if (quad_index1 != quad_index2) {
 				// create new children for the internal node
-				// printf("Appending new children %d %d to internal node\t", quad_index1, quad_index2);
-				// printf("Internal quad: x[%.1f] y[%.1f] w[%.1f]\n", root->quad.x, root->quad.y, root->quad.width)
 				NodeSeq* node1 = new_node(original_body.mass, original_body.pos, get_sub_quad(root->quad, quad_index1), true, root->level + 1);
 				NodeSeq* node2 = new_node(to_insert.mass, to_insert.pos, get_sub_quad(root->quad, quad_index2), true, root->level + 1);
 				node1->bodies.push_back(original_body);
@@ -127,8 +124,6 @@ void insert_node(NodeSeq* root, Body to_insert) {
 		int quad_index = get_quad_index(root->quad, to_insert.pos);
 		// append to the current root, update the central
 		if (root->children[quad_index] == NULL) {
-			// printf("Appending new child %d to internal node\t", quad_index);
-			// printf("Internal quad: x[%.1f] y[%.1f] w[%.1f]\n", root->quad.x, root->quad.y, root->quad.width);
 			// add the node to the node list
 			NodeSeq* new_child = new_node(to_insert.mass, to_insert.pos, get_sub_quad(root->quad, quad_index), true, root->level + 1);
 			new_child->bodies.push_back(to_insert);
@@ -189,14 +184,9 @@ void compute_force(NodeSeq* root, Body *b) {
 }
  
 void update_position(Body* bodies) {
-	//#pragma omp parallel for schedule(static)
+	#pragma omp parallel for schedule(static)
 	for (int i = 0; i < N; i++) {
 		Body* bp = &bodies[i];
-		/*
-		printf("body[%d] x=%.1f y=%.1f force_x=%.1f force_y=%.1f speed_x=%.1f speed_y=%.1f\n",
-			i, bp->pos.x, bp->pos.y, bp->force.x, bp->force.y, bp->speed.x, bp->speed.y);
-		*/
-		
 		// update the position
 		bp->speed.x += bp->force.x * DT;
 		bp->speed.y += bp->force.y * DT;

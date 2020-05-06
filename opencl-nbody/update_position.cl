@@ -6,11 +6,6 @@ __kernel void update_position(__global Body* bodies) {
 	unsigned int index = get_global_id(0);
     __global Body* target = &bodies[index];
 
-    /*
-    printf("body[%d] x=%.1f y=%.1f force_x=%.1f force_y=%.1f speed_x=%.1f speed_y=%.1f\n",
-        index, target->pos.x, target->pos.y, target->force.x, target->force.y, target->speed.x, target->speed.y);
-    */
-    
     // update the position
     target->speed.x += target->force.x * DT;
     target->speed.y += target->force.y * DT;

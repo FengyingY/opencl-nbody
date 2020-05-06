@@ -5,12 +5,6 @@
 __kernel void next_move(__global Body *bodies) {
     unsigned int index = get_global_id(0);
     __global Body* target = &bodies[index];
-
-
-    /*
-    if (index == 8)
-        printf("body[%d] x=%.1f, y=%.1f mass=%.1f\n", index, target.pos.x, target.pos.y, target.mass);
-    */
         
     // compute the accumulated acceleration
     for (int i = 0; i < N; i++) {
@@ -27,20 +21,6 @@ __kernel void next_move(__global Body *bodies) {
         if (!isnan(x_dir))
             target->force.x += x_dir;
         if (!isnan(y_dir))
-            target->force.y += y_dir;
-
-        /*
-        if (i == 0) {
-            printf("i=%d distance=%.4f F=%.4f mass=%.4f accumulate_x=%.4f accumulate_y=%.4f\n",
-                i, distance, F, bodies[i].mass, target->force.x, target->force.y);
-        }
-        */        
+            target->force.y += y_dir;      
     }
-    /*
-     printf("body[%d] x=%.1f, y=%.1f mass=%.1f force.x=%.1f force.y=%.1f \n", 
-        index, bodies[index].pos.x, bodies[index].pos.y, bodies[index].mass,
-        bodies[index].force.x, bodies[index].force.y);
-    */
-   
-
 }

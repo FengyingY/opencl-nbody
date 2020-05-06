@@ -1,7 +1,7 @@
 #include "Body.h"
 
 typedef struct Quad {
-	float x;
+	float x;		// upper left corner position
 	float y;
 	float width;
 }Quad;

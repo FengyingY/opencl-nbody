@@ -94,5 +94,11 @@
     <ClInclude Include="cycletimer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Threadpool.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BHParallelWorker.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
