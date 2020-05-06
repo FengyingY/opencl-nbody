@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="opencl-nbody.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Utility.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -36,20 +33,17 @@
     <ClCompile Include="BHParallel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Simulator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="instrument.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="cycletimer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="vector_add_kernel.cl">
-      <Filter>Source Files</Filter>
-    </None>
     <None Include="next_move.cl">
       <Filter>Source Files</Filter>
     </None>
@@ -95,9 +89,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Threadpool.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="BHParallelWorker.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

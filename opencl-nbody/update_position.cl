@@ -15,6 +15,4 @@ __kernel void update_position(__global Body* bodies) {
     // reset force
     target->force.x = 0;
     target->force.y = 0;
-
-    // printf("body[%d] x=%.1f, y=%.1f mass=%.1f\n", index, bodies[index].pos.x, bodies[index].pos.y, bodies[index].mass);
 }

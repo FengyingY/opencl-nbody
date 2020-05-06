@@ -2,9 +2,6 @@
 #include "Body.h"
 #include "Opencl.h"
 #include "BH.h"
-#if POCO
-#include "BHParallelWorker.h"
-#endif
 
 __interface Simulator {
 	Body* next_move();
@@ -51,11 +48,7 @@ private:
 	std::vector<std::vector<int> > nodes_at_level;
 	int** nodes_at_level_arr;
 	int offset_at_level[MAXLEVEL + 1];
-#if POCO
-	Poco::ThreadPool pool;
-	BHParallelWorker worker;
-#endif
-	
+
 	void init_quads_dfs(Quad quad, int index, int offset, int level);
 	void init_quads_bfs(); 
 	void reset_node(int node_index);

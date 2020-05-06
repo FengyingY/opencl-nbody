@@ -187,9 +187,6 @@ void BHParallel::construct_tree_ser(int index) {
 void BHParallel::compute_force() {
 #if (GPU)
 	START_ACTIVITY(ACTIVITY_HOST_TO_DEVICE);
-#if DEBUG
-	printf("Compute force: copying bodies to kernel\n");
-#endif
 	// copy the bodies and nodes array to the device
 	cl->err = clEnqueueWriteBuffer(cl->queue, bodies_obj, CL_TRUE, 0, sizeof(Body) * N, bodies, 0, NULL, NULL);
 	if (cl->err) {
@@ -197,9 +194,6 @@ void BHParallel::compute_force() {
 		exit(cl->err);
 	}
 
-#if DEBUG
-	printf("Compute force: copying nodes to kernel\n");
-#endif
 	cl->err = clEnqueueWriteBuffer(cl->queue, nodes_obj, CL_TRUE, 0, sizeof(Node) * MAXNODE, nodes, 0, NULL, NULL);
 	if (cl->err) {
 		fprintf(stderr, "BHParallel::compute_force clEnqueueWriteBuffer for nodes error\n");
@@ -209,9 +203,6 @@ void BHParallel::compute_force() {
 	
 	// launch the kernel 
 	START_ACTIVITY(ACTIVITY_FORCE);
-#if DEBUG
-	printf("Compute force: executed kernel\n");
-#endif
 	opencl_compute_force(&bodies_obj, &nodes_obj, cl);
 	FINISH_ACTIVITY(ACTIVITY_FORCE);
 
@@ -256,18 +247,10 @@ void BHParallel::update_position() {
 #if (GPU)
 	// launch the kernel
 	START_ACTIVITY(ACTIVITY_POSITION);
-#if DEBUG
-	printf("Update position: executed kernel\n");
-#endif // DEBUG
-
 	opencl_update_position(&bodies_obj, cl);
 	FINISH_ACTIVITY(ACTIVITY_POSITION);
 	// write the bodies back to the host
-
 	START_ACTIVITY(ACTIVITY_DEVICE_TO_HOST);
-#if DEBUG
-	printf("Update position: copyinboides back \n");
-#endif
 	cl->err = clEnqueueReadBuffer(cl->queue, bodies_obj, CL_TRUE, 0, sizeof(Body) * N, bodies, 0, NULL, NULL);
 	if (cl->err) {
 		fprintf(stderr, "NaiveCL::next_move clEnqueueReadBuffer error\n");
@@ -303,9 +286,7 @@ void BHParallel::init_quads_dfs(Quad quad, int index, int offset, int level) {
 	nodes[index].level = level;
 	if (level < MAXLEVEL)
 		nodes_at_level[level].push_back(index);
-	
-	// printf("n[%d]\tx=%.4f\ty=%.4f\tw=%.4f\tlevel=%d\toffset=%d\n", index, quad.x, quad.y, quad.width, level, offset);
-	
+		
 	// update the offset
 	offset = (offset - 1) / 4;
 
@@ -323,31 +304,6 @@ void BHParallel::init_quads_dfs(Quad quad, int index, int offset, int level) {
 	}
 }
 
-
-void BHParallel::init_quads_bfs() {
-	// initialize quads for the nodes - bfs
-	// SCHEMA 1 hard to parallelize tree construction
-	//        / -------- | ------ - |
-	// 	|0| |1 | 2 | 3 | 4| |5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | ...
-	// 	\__ | _______ |
-
-	int arr_ptr = 0;	// pointer of the nodes array
-	float w = WIDTH;	// the width of quad at this level
-	Quad quad;
-	for (int i = 0; i <= MAXLEVEL; i++) {
-		int n = WIDTH / w;
-		quad.width = w;
-		for (int r = 0; r < n; r++) {
-			quad.y = r * w;
-			for (int c = 0; c < n; c++) {
-				quad.x = c * w;
-				nodes[arr_ptr++].quad = quad;
-			}
-		}
-		// update w for next level
-		w /= 2;
-	}
-}
 
 int BHParallel::get_quad_index(Quad quad, Position pos) {
 	float diff_x = pos.x - quad.x;

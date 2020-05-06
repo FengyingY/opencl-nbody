@@ -15,7 +15,6 @@ typedef struct Node {
 	int bodies_count;			// the number of bodies at this node or below this node
 } Node;
 
-/*
 typedef struct NodeSeq {
 	float central_mass;			// aggregated mass
 	Position central_pos;		// weighted position
@@ -25,11 +24,4 @@ typedef struct NodeSeq {
 	NodeSeq* children[4];		// 4 children. 0 = upper left, 1 = upper right, 2 = lower left, 3 = loewr right
 	std::vector<Body> bodies;	// bodies in this cell, only set for the leaves
 }NodeSeq;
-
-__interface BHTree {
-	void construct_tree(Body* bodies);
-	void compute_force();
-	void update_position();
-};
-*/
 

@@ -167,11 +167,10 @@
     <ClCompile Include="BHSequential.cpp" />
     <ClCompile Include="cycletimer.cpp" />
     <ClCompile Include="instrument.cpp" />
-    <ClCompile Include="opencl-nbody.cpp" />
+    <ClCompile Include="Main.cpp" />
     <ClCompile Include="Opencl.cpp" />
     <ClCompile Include="SDLDraw.cpp" />
     <ClCompile Include="NaiveCL.cpp" />
-    <ClCompile Include="Simulator.cpp" />
     <ClCompile Include="Utility.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -179,11 +178,9 @@
     <None Include="compute_force_kernel.cl" />
     <None Include="next_move.cl" />
     <None Include="update_position.cl" />
-    <None Include="vector_add_kernel.cl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BH.h" />
-    <ClInclude Include="BHParallelWorker.h" />
     <ClInclude Include="Body.h" />
     <ClInclude Include="Config.h" />
     <ClInclude Include="cycletimer.h" />

@@ -29,7 +29,7 @@ int main(int argc, char *argv[]) {
     initialize_bodies(bodies);
 
     // Initialize the simulator and the renderer
-    Simulator* sim = new BHParallel(bodies);
+    Simulator* sim = new NaiveCL(bodies);
     SDL_Renderer* render = SDLinit();
     FINISH_ACTIVITY(ACTIVITY_STARTUP);
 

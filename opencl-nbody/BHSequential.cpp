@@ -6,16 +6,6 @@
 #include "Simulator.h"
 #include "instrument.h"
 
-typedef struct NodeSeq {
-	float central_mass;			// aggregated mass
-	Position central_pos;		// weighted position
-	Quad quad;					// the square region this node represent 
-	bool isLeaf;				// is leaf or not
-	int level;					// the level of the tree
-	NodeSeq* children[4];		// 4 children. 0 = upper left, 1 = upper right, 2 = lower left, 3 = loewr right
-	std::vector<Body> bodies;	// bodies in this cell, only set for the leaves
-}NodeSeq;
-
 
 int get_quad_index(Quad quad, Position pos) {
 	float diff_x = pos.x - quad.x;
@@ -131,7 +121,6 @@ void insert_node(NodeSeq* root, Body to_insert) {
 		}
 		// search in the next level
 		else {
-			// printf("NodeSeq is not child, go to child %d\n", quad_index);
 			insert_node(root->children[quad_index], to_insert);
 		}
 	}
@@ -229,32 +218,3 @@ Body* BHSequential::next_move() {
 BHSequential::~BHSequential() {
 	free(bodies);
 }
-
-// for test only
-/*
-int main()
-{
-	// create the test cases
-	std::vector<body> bodies;
-	float x[5] = { 20, 77, 76, 96, 55 };
-	float y[5] = { 30, 5, 13, 13, 90 };
-	float m[5] = { 1, 2, 3, 4, 5 };
-	for (int i = 0; i < 5; i++) {
-		body body;
-		body.mass = m[i];
-		body.pos.x = x[i];
-		body.pos.y = y[i];
-		bodies.push_back(body);
-	}
-
-	NodeSeq* root = constrcut_tree(bodies);
-
-	for (auto& b : bodies) {
-		compute_force(root, &b);
-	}
-
-	next_move(bodies, (float)0.1);
-
-	return 0;
-}
-*/
